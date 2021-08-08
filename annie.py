@@ -29,23 +29,16 @@ def introduce(update, context):
 
 def bot(update, context):
     first_name = update.message.from_user.first_name
-    print('hello')
     message = "My name is Annie and I'm not a bot. Say that again and you are dead meat!"
     context.bot.send_message(chat_id=update.effective_chat.id, text=message)
-
-def video(update, context):
-    print('hello')
-    print(update)
 
 start_handler = MessageHandler(Filters.regex('(H|h)(ello|ey|i)'), start)
 introduce = MessageHandler(Filters.regex('(I|i)ntroduce'), introduce)
 bot_reveal = MessageHandler(Filters.regex('(b|B)(ot)'), bot)
-video_handler = MessageHandler(Filters.attachment, video)
 
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(introduce)
 dispatcher.add_handler(bot_reveal)
-dispatcher.add_handler(video_handler)
 updater.start_polling()
 
 # Run the bot until you press Ctrl-C or the process receives SIGINT,
