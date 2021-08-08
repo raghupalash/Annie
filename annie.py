@@ -32,13 +32,25 @@ def bot(update, context):
     message = "My name is Annie and I'm not a bot. Say that again and you are dead meat!"
     context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
-start_handler = MessageHandler(Filters.regex('(H|h)(ello|ey|i)'), start)
-introduce = MessageHandler(Filters.regex('(I|i)ntroduce'), introduce)
-bot_reveal = MessageHandler(Filters.regex('(b|B)(ot)'), bot)
+def fix(update, context):
+    message = "Awwww, you would do that for me? I knew I fall for you for a reason. You are lovely!!"
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+
+def thanks(update, context):
+    message = "thanks babe!"
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+
+start_handler = MessageHandler(Filters.regex(r'^(H|h)(ello|ey|i)$'), start)
+introduce = MessageHandler(Filters.regex(r'^(I|i)ntroduce$'), introduce)
+bot_reveal = MessageHandler(Filters.regex(r'^(b|B)(ot)&'), bot)
+fix = MessageHandler(Filters.regex(r'^(f|F)(ix you)$'), fix)
+thanks = MessageHandler(Filters.regex(r'(t|T)(hank)'), thanks)
 
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(introduce)
 dispatcher.add_handler(bot_reveal)
+dispatcher.add_handler(fix)
+dispatcher.add_handler(thanks)
 updater.start_polling()
 
 # Run the bot until you press Ctrl-C or the process receives SIGINT,
