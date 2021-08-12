@@ -16,9 +16,9 @@ import time
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 WORKBOOK = load_workbook(filename="database.xlsx")
-SHEET = WORKBOOK.active
+WATCHED_SHEET = WORKBOOK["Sheet1"]
+RECOMMENDED_SHEET = WORKBOOK["Recommended"]
 
-MOVIE_TYPE = ""
 TYPE, NAME = range(2)
 
 def start(update, context):
@@ -67,21 +67,22 @@ def movie_type(update, context):
 
 def movie_name(update, context):
     # Stores movie type in array and asks for movie name
-    MOVIE_TYPE = update.message.text
-    print('hello')
-    print(MOVIE_TYPE)
+    print(update.message.text)
+    context.user_data["movie_type"] = update.message.text
     update.message.reply_text(
         "Alright, what's the name of the movie?", reply_markup=ReplyKeyboardRemove()
     )
-
     return NAME
 
 def add_movie(update, context):
     # Stores the movie in the database
-    SHEET.append([update.message.text, ])
+    if context.user_data["movie_type"] == 'Watched':
+        WATCHED_SHEET.append([update.message.text, ])
+    else:
+        RECOMMENDED_SHEET.append([update.message.text, ])
     WORKBOOK.save(filename="database.xlsx")
     update.message.reply_text(
-        f"{update.message.text} added to the list, no need to thank me!"
+        f"{update.message.text} added to the {context.user_data['movie_type']} list, no need to thank me!"
     )
     return ConversationHandler.END
 
@@ -106,7 +107,7 @@ def main() -> None:
     thanks_handler = MessageHandler(Filters.regex(r'(t|T)(hank)'), thanks)
     watched_movies_handler = MessageHandler(Filters.regex(r'watched movies'), list_watched_movies)
 
-    conv_handler = ConversationHandler(
+    add_movie_handler = ConversationHandler(
         entry_points=[MessageHandler(Filters.regex(r'^(A|a)dd$'), movie_type)],
         states={
             TYPE: [MessageHandler(Filters.regex(r'(Watched|Recommended)'), movie_name)],
@@ -121,7 +122,7 @@ def main() -> None:
     dispatcher.add_handler(fix_handler)
     dispatcher.add_handler(thanks_handler)
     dispatcher.add_handler(watched_movies_handler)
-    dispatcher.add_handler(conv_handler)
+    dispatcher.add_handler(add_movie_handler)
 
     updater.start_polling()
 
