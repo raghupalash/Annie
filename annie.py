@@ -96,7 +96,7 @@ def cancel(update, context):
 
 
 def main() -> None:
-    updater = Updater(token='1908662113:AAEfxq-DT7BfARJeMPnT7sifhqqQnOVsrhE')
+    updater = Updater(token='TOKEN')
 
     dispatcher = updater.dispatcher
 
